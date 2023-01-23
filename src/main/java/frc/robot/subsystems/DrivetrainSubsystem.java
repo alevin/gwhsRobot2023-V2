@@ -5,10 +5,9 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.AutoConstants.THETA_CONSTRAINTS;
-import static frc.robot.Constants.DrivetrainConstants.PIGEON_ID;
+import static frc.robot.Constants.DrivetrainConstants.GYRO_TYPE;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
@@ -30,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib5507.wrappers.gyro.WrapperedGyro;
+// import frc.lib5507.hardwareWrappers.Gyro.WrapperedGyro.GyroType;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DrivetrainConstants;
@@ -44,16 +45,21 @@ import java.util.stream.IntStream;
 
 public class DrivetrainSubsystem extends SubsystemBase {
 
-  private final WPI_Pigeon2 pigeon = new WPI_Pigeon2(PIGEON_ID);
-  // private final AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
+  // private final WrapperedGyro gyro = new WrapperedGyro(GyroType.PIGEON);
+  // private final WrapperedGyro gyro = new WrapperedGyro(GyroType.NAVX);
+  private final WrapperedGyro gyro = new WrapperedGyro(GYRO_TYPE);
+
+  // private final WPI_Pigeon2 gyro = new WPI_Pigeon2(PIGEON_ID);
+  // private final AHRS gyro = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
+
   private final SwerveModule[] swerveModules;
 
   private ChassisSpeeds desiredChassisSpeeds;
 
   public DrivetrainSubsystem(String robotName) {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-    pigeon.configMountPoseRoll(0);
-    pigeon.configMountPoseYaw(0);
+    // gyro.configMountPoseRoll(0);
+    // gyro.configMountPoseYaw(0);
 
     ShuffleboardLayout frontLeftLayout = null;
     ShuffleboardLayout frontRightLayout = null;
@@ -217,14 +223,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public Rotation2d getGyroscopeRotation() {
-    return pigeon.getRotation2d();
+    return gyro.getRotation2d();
     // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes
     // the angle increase.
     // return Rotation2d.fromDegrees(360.0 - navx.getYaw());
   }
 
   public void setGyroscopeRotation(double angleDeg) {
-    pigeon.setYaw(angleDeg);
+    gyro.setYaw(angleDeg);
   }
 
   public void resetGyro() {
